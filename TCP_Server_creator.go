@@ -20,6 +20,7 @@ func (l *TCPListener) Stop() {
 	}
 }
 
+// uses a unique TCP DataType
 func Create_TCP_listener(port uint16, request_channel chan<- TCPNetworkData) *TCPListener {
 	tcpListener := &TCPListener{
 		stopCh: make(chan struct{}),
