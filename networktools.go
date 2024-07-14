@@ -35,7 +35,7 @@ func SendUDP(address string, data []byte) error {
 	return nil
 }
 
-func SendTCP(address string, data []byte) (*net.TCPConn, error) {
+func SendInitialTCP(address string, data []byte) (*net.TCPConn, error) {
 	// Resolve the TCP address
 	tcpAddr, err := net.ResolveTCPAddr("tcp", address)
 	if err != nil {
@@ -57,6 +57,21 @@ func SendTCP(address string, data []byte) (*net.TCPConn, error) {
 	defer conn.Close()
 	// Return the connection and nil error
 	return conn, nil
+}
+
+// Distinction between SendTCPReply and SendInitialTCP is if you've already established a connection.
+func SendTCPReply(conn *net.TCPConn, data []byte) error {
+	if conn == nil {
+		return fmt.Errorf("connection is nil")
+	}
+
+	// Send the data
+	_, err := conn.Write(data)
+	if err != nil {
+		return fmt.Errorf("error sending data: %w", err)
+	}
+
+	return nil
 }
 
 func GetPublicIP() (string, error) {

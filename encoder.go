@@ -8,19 +8,6 @@ import (
 	"reflect"
 )
 
-type Request struct {
-	Type    uint8
-	Payload []byte
-}
-
-func NewRequest(Type uint8, Payload []byte) Request {
-	req := Request{
-		Type,
-		Payload,
-	}
-	return req
-}
-
 func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	// First, serialize the data
 	serialisedData, err := __serialiseData(data)
