@@ -54,7 +54,7 @@ func SendTCP(address string, data []byte) (*net.TCPConn, error) {
 		conn.Close() // Close the connection if there's an error sending data
 		return nil, err
 	}
-
+	defer conn.Close()
 	// Return the connection and nil error
 	return conn, nil
 }
