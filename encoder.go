@@ -29,7 +29,7 @@ func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	}
 
 	// Create a Request with the serialized data as the payload
-	req := newRequest(reqType, serialisedData)
+	req := NewRequest(reqType, serialisedData)
 	serialisedRequest, err := __serialiseRequest(req)
 	if err != nil {
 		return nil, err
