@@ -35,27 +35,28 @@ func SendUDP(address string, data []byte) error {
 	return nil
 }
 
-func SendTCP(address string, data []byte) error {
+func SendTCP(address string, data []byte) (*net.TCPConn, error) {
 	// Resolve the TCP address
 	tcpAddr, err := net.ResolveTCPAddr("tcp", address)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// Establish a TCP connection
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer conn.Close()
 
 	// Send the data
 	_, err = conn.Write(data)
 	if err != nil {
-		return err
+		conn.Close() // Close the connection if there's an error sending data
+		return nil, err
 	}
 
-	return nil
+	// Return the connection and nil error
+	return conn, nil
 }
 
 func GetPublicIP() (string, error) {
