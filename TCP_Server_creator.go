@@ -16,7 +16,7 @@ import (
 //	request_channel, listener := Create_TCP_listener(8080)
 //	(code code code)
 //	listener.Stop (When you're done)
-func Create_TCP_Listener(port uint16) (chan<- TCPNetworkData, *TCPListener) {
+func Create_TCP_Listener(port uint16) (<-chan TCPNetworkData, *TCPListener) {
 
 	request_channel := make(chan TCPNetworkData)
 	tcpListener := &TCPListener{
