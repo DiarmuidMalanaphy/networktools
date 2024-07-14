@@ -26,14 +26,15 @@ func (l *UDPListener) Stop() {
 //	listener := Create_UDP_listener(8080, requestChannel)
 //	(code code code)
 //	listener.Stop (when you're done with the listener)
-func Create_UDP_Listener(port uint16, request_channel chan<- UDPNetworkData) *UDPListener {
+func Create_UDP_Listener(port uint16) (chan<- UDPNetworkData, *UDPListener) {
+	request_channel := make(chan UDPNetworkData)
 	listener := &UDPListener{
 		StopCh: make(chan struct{}),
 	}
 
 	go listen(port, request_channel, listener.StopCh)
 
-	return listener
+	return request_channel, listener
 }
 
 func listen(port uint16, request_channel chan<- UDPNetworkData, stopCh <-chan struct{}) {

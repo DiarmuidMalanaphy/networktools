@@ -9,22 +9,23 @@ import (
 
 // Creates a TCP listener that forwards all requests to a given port on the request channel.
 // The request channel is a collection of TCPNetworkData onjects defined clearly in the standards file.
-// The function will return a TCP listener object that represents the TCP listener routeine. To stop listening on the TCP port use the Stop command.
+// The function will return the request channel and a TCP listener object that represents the TCP listener routeine. To stop listening on the TCP port use the Stop command.
 //
 // Example Usage:
 //
-//	request_channel := make(chan networktools.TCPNetworkData)
-//	listener := Create_TCP_listener(8080, request_channel)
+//	request_channel, listener := Create_TCP_listener(8080)
 //	(code code code)
 //	listener.Stop (When you're done)
-func Create_TCP_listener(port uint16, request_channel chan<- TCPNetworkData) *TCPListener {
+func Create_TCP_Listener(port uint16) (chan<- TCPNetworkData, *TCPListener) {
+
+	request_channel := make(chan TCPNetworkData)
 	tcpListener := &TCPListener{
 		StopCh: make(chan struct{}),
 	}
 
 	go listen_tcp(port, request_channel, tcpListener)
 
-	return tcpListener
+	return request_channel, tcpListener
 }
 
 func listen_tcp(port uint16, request_channel chan<- TCPNetworkData, tcpListener *TCPListener) {
