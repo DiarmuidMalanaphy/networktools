@@ -14,7 +14,7 @@ import (
 //
 //	//Excerpt from previous project.
 //	var ic ImportedCamera
-//	_ := deserialiseData(req.Request.Payload, &ic)
+//	_ := deserialiseData(&ic, req.Request.Payload)
 //	newCamera := (Logic to generate camera object)
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
 func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
@@ -66,11 +66,11 @@ func __serialiseData(data interface{}) ([]byte, error) {
 // Example:
 //
 //	var frame ImageFrame
-//	err := deserialiseData(req.Request.Payload, &frame)
+//	err := deserialiseData(&frame, req.Request.Payload)
 //	//The payload is read inplace into the frame variable
 //
 // In practice this function should be paired with the DeserialiseRequest function.
-func DeserialiseData(raw_data []byte, data_type interface{}) error {
+func DeserialiseData(data_type interface{}, raw_data []byte) error {
 	buf := bytes.NewReader(raw_data)
 	v := reflect.ValueOf(data_type)
 
@@ -138,7 +138,7 @@ func __serialiseRequest(req Request) ([]byte, error) {
 //	// the buffer could be any sort of raw data
 //	req, err := deserialiseRequest(buffer[:n])
 //	var c Camera
-//	err := deserialiseData(req.Request.Payload, &c)
+//	err := deserialiseData(&c, req.Request.Payload)
 //	cameraMap.removeCamera(c)
 func DeserialiseRequest(data []byte) (Request, error) {
 	var req Request

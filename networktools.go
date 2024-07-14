@@ -81,7 +81,7 @@ func SendInitialTCP(address string, data []byte) (*net.TCPConn, error) {
 
 // SendTCPReply is a function to reply to a given TCP connection.
 // The function takes a given connection and data to send and returns an error value, with nil implying there has been no error.
-func SendTCPReply(conn *net.TCPConn, data []byte) error {
+func SendTCPReply(conn net.Conn, data []byte) error {
 	if conn == nil {
 		return fmt.Errorf("connection is nil")
 	}
