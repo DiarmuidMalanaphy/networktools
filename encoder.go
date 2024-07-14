@@ -8,6 +8,15 @@ import (
 	"reflect"
 )
 
+// GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.
+//
+// Example:
+//
+//	//Excerpt from previous project.
+//	var ic ImportedCamera
+//	_ := deserialiseData(req.Request.Payload, &ic)
+//	newCamera := (Logic to generate camera object)
+//	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
 func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	// First, serialize the data
 	serialisedData, err := __serialiseData(data)
@@ -51,13 +60,16 @@ func __serialiseData(data interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-//This method converts a section of raw data to a given struct or slice of structs.
-//The use of this method requires an instance of the struct.
-// Example usage on a singular object ->
-// var c Camera
-// err := deserialiseData(req.Request.Payload, &c)
-// where the payload is read into the c variable.
-
+// DeserialiseData converts a section of raw data to a given struct or slice of structs.
+// The use of this method requires an instance of the struct.
+//
+// Example:
+//
+//	var frame ImageFrame
+//	err := deserialiseData(req.Request.Payload, &frame)
+//	//The payload is read inplace into the frame variable
+//
+// In practice this function should be paired with the DeserialiseRequest function.
 func DeserialiseData(raw_data []byte, data_type interface{}) error {
 	buf := bytes.NewReader(raw_data)
 	v := reflect.ValueOf(data_type)
@@ -117,8 +129,17 @@ func __serialiseRequest(req Request) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// This function handles the conversion of raw data into a request type.
-// You will have to define a standard of what each request type means and what object you would like to associate with each type.
+// DeserialiseRequest handles the deserialisation of raw data read from a socket into the request standard.
+// You will have to pair this with the DeserialiseData function as the meaning of each request type is left to the programmer.
+//
+// Example:
+//
+//	n, remoteAddr, err := conn.ReadFromUDP(buffer)
+//	// the buffer could be any sort of raw data
+//	req, err := deserialiseRequest(buffer[:n])
+//	var c Camera
+//	err := deserialiseData(req.Request.Payload, &c)
+//	cameraMap.removeCamera(c)
 func DeserialiseRequest(data []byte) (Request, error) {
 	var req Request
 	buf := bytes.NewReader(data)

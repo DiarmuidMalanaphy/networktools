@@ -7,23 +7,19 @@ import (
 	"time"
 )
 
-type TCPListener struct {
-	stopCh   chan struct{}
-	listener net.Listener
-}
-
-// Method to stop the listener
-func (l *TCPListener) Stop() {
-	close(l.stopCh)
-	if l.listener != nil {
-		l.listener.Close()
-	}
-}
-
-// uses a unique TCP DataType
+// Creates a TCP listener that forwards all requests to a given port on the request channel.
+// The request channel is a collection of TCPNetworkData onjects defined clearly in the standards file.
+// The function will return a TCP listener object that represents the TCP listener routeine. To stop listening on the TCP port use the Stop command.
+//
+// Example Usage:
+//
+//	request_channel := make(chan networktools.TCPNetworkData)
+//	listener := Create_TCP_listener(8080, request_channel)
+//	(code code code)
+//	listener.Stop (When you're done)
 func Create_TCP_listener(port uint16, request_channel chan<- TCPNetworkData) *TCPListener {
 	tcpListener := &TCPListener{
-		stopCh: make(chan struct{}),
+		StopCh: make(chan struct{}),
 	}
 
 	go listen_tcp(port, request_channel, tcpListener)
@@ -38,7 +34,7 @@ func listen_tcp(port uint16, request_channel chan<- TCPNetworkData, tcpListener 
 		fmt.Println("Error listening:", err)
 		return
 	}
-	tcpListener.listener = listener
+	tcpListener.Listener = listener
 	defer listener.Close()
 
 	publicIP, err := GetPublicIP()
@@ -57,7 +53,7 @@ func listen_tcp(port uint16, request_channel chan<- TCPNetworkData, tcpListener 
 
 	for {
 		select {
-		case <-tcpListener.stopCh:
+		case <-tcpListener.StopCh:
 			return
 		default:
 			listener.(*net.TCPListener).SetDeadline(time.Now().Add(time.Second))

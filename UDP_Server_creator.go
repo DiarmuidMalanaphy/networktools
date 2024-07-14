@@ -7,29 +7,31 @@ import (
 )
 
 type UDPListener struct {
-	stopCh chan struct{}
+	StopCh chan struct{}
 }
 
 // Method to stop the listener
 func (l *UDPListener) Stop() {
-	close(l.stopCh)
+	close(l.StopCh)
 }
 
 // Creates a UDP listener that forwards all requests to a given port to the request channel.
-// The request channel is a collection of NetworkData objects defined clearly in the standards file.
+// The request channel is a collection of UDPNetworkData objects defined clearly in the standards file.
 // The function will return a UDP listener object that represents the UDP listener routine.
 // To stop listening on the UDP port use the Stop command.
-// Example usage
-// requestChannel := make(chan networktools.UDPNetworkData)
-// listener := create_UDP_listener(8080, requestChannel)
-// (code code code)
-// listener.stop (when you're done with the listener)
+//
+// Example usage:
+//
+//	requestChannel := make(chan networktools.UDPNetworkData)
+//	listener := Create_UDP_listener(8080, requestChannel)
+//	(code code code)
+//	listener.Stop (when you're done with the listener)
 func Create_UDP_Listener(port uint16, request_channel chan<- UDPNetworkData) *UDPListener {
 	listener := &UDPListener{
-		stopCh: make(chan struct{}),
+		StopCh: make(chan struct{}),
 	}
 
-	go listen(port, request_channel, listener.stopCh)
+	go listen(port, request_channel, listener.StopCh)
 
 	return listener
 }

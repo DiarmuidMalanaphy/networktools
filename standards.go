@@ -25,3 +25,22 @@ type TCPNetworkData struct {
 	Request Request
 	Conn    net.Conn
 }
+
+func (d *TCPNetworkData) Get_Addr() net.Addr {
+	return d.Conn.RemoteAddr()
+
+}
+
+type TCPListener struct {
+	StopCh   chan struct{}
+	Listener net.Listener
+}
+
+// Method to stop the listener
+func (l *TCPListener) Stop() {
+	close(l.StopCh)
+	if l.Listener != nil {
+		l.Listener.Close()
+
+	}
+}
