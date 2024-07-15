@@ -61,17 +61,20 @@ func SendInitialTCP(target_address string, data []byte) (net.Conn, error) {
 	// Resolve the TCP address
 	tcpAddr, err := net.ResolveTCPAddr("tcp", target_address)
 	if err != nil {
+		fmt.Printf("ErrorA")
 		return nil, err
 	}
 	// Establish a TCP connection
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
+		fmt.Printf("ErrorB")
 		return nil, err
 	}
 
 	// Send the data
 	_, err = conn.Write(data)
 	if err != nil {
+		fmt.Printf("ErrorC")
 		conn.Close() // Close the connection if there's an error sending data
 		return nil, err
 	}
@@ -85,12 +88,10 @@ func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
 	buffer := make([]byte, buff_size)
 	_, err := conn.Read(buffer)
 	if err != nil {
-		if err != nil {
-			if err == io.EOF {
-				return buffer, fmt.Errorf("Connection closed by server")
-			} else {
-				return buffer, fmt.Errorf("Error reading from connection:", err)
-			}
+		if err == io.EOF {
+			return buffer, fmt.Errorf("Connection closed by server")
+		} else {
+			return buffer, fmt.Errorf("Error reading from connection:", err)
 		}
 	}
 	return buffer, nil
