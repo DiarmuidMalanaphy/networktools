@@ -86,7 +86,8 @@ func SendInitialTCP(target_address string, data []byte) (net.Conn, error) {
 func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
 	conn.SetReadDeadline(time.Now().Add(time.Second))
 	buffer := make([]byte, buff_size)
-	_, err := conn.Read(buffer)
+	n, err := conn.Read(buffer)
+	fmt.Println(n)
 	if err != nil {
 		if err == io.EOF {
 			return buffer, fmt.Errorf("Connection closed by server")
