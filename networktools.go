@@ -58,28 +58,22 @@ func SendUDP(target_address string, data []byte) error {
 // It works similarly to SendUDP with the distinction being this function returns a connection.
 // The function takes an address and some initial data to send and returns the established TCP connection.
 func SendInitialTCP(target_address string, data []byte) (net.Conn, error) {
-	// Resolve the TCP address
 	tcpAddr, err := net.ResolveTCPAddr("tcp", target_address)
 	if err != nil {
-		fmt.Printf("ErrorA")
-		return nil, err
-	}
-	// Establish a TCP connection
-	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	if err != nil {
-		fmt.Printf("ErrorB")
-		return nil, err
+		return nil, fmt.Errorf("error resolving address: %w", err)
 	}
 
-	// Send the data
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
+	if err != nil {
+		return nil, fmt.Errorf("error dialing TCP: %w", err)
+	}
+
 	_, err = conn.Write(data)
 	if err != nil {
-		fmt.Printf("ErrorC")
-		conn.Close() // Close the connection if there's an error sending data
-		return nil, err
+		conn.Close()
+		return nil, fmt.Errorf("error sending initial data: %w", err)
 	}
-	defer conn.Close()
-	// Return the connection and nil error
+
 	return conn, nil
 }
 
@@ -128,12 +122,15 @@ func SendTCPReply(conn net.Conn, data []byte) error {
 func Handle_Single_TCP_Exchange(target_addr string, data []byte, buff_size uint16) ([]byte, error) {
 	conn, err := SendInitialTCP(target_addr, data)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in SendInitialTCP: %w", err)
 	}
+	defer conn.Close() // Ensure the connection is closed when we're done
+
 	buff, err := Get_TCP_Reply(conn, buff_size)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error in Get_TCP_Reply: %w", err)
 	}
+
 	return buff, nil
 }
 
