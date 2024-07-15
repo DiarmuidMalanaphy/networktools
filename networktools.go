@@ -83,7 +83,7 @@ func SendInitialTCP(target_address string, data []byte) (net.Conn, error) {
 func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
 	conn.SetReadDeadline(time.Now().Add(time.Second))
 	buffer := make([]byte, buff_size)
-	n, err := conn.Read(buffer)
+	_, err := conn.Read(buffer)
 	if err != nil {
 		if err != nil {
 			if err == io.EOF {
@@ -93,7 +93,7 @@ func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
 			}
 		}
 	}
-	return buffer[:n], nil
+	return buffer, nil
 
 }
 
