@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // SendUDP takes an address and data and uses UDP to send transmit the data
@@ -26,8 +27,8 @@ import (
 //		}
 //
 //	fmt.Printf("Successfully transmitted")
-func SendUDP(address string, data []byte) error {
-	udpAddr, err := net.ResolveUDPAddr("udp", address)
+func SendUDP(target_address string, data []byte) error {
+	udpAddr, err := net.ResolveUDPAddr("udp", target_address)
 	if err != nil {
 		return err
 	}
@@ -56,9 +57,9 @@ func SendUDP(address string, data []byte) error {
 // SendInitialTCP is used to start a connection between two machines using TCP.
 // It works similarly to SendUDP with the distinction being this function returns a connection.
 // The function takes an address and some initial data to send and returns the established TCP connection.
-func SendInitialTCP(address string, data []byte) (*net.TCPConn, error) {
+func SendInitialTCP(target_address string, data []byte) (net.Conn, error) {
 	// Resolve the TCP address
-	tcpAddr, err := net.ResolveTCPAddr("tcp", address)
+	tcpAddr, err := net.ResolveTCPAddr("tcp", target_address)
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +80,23 @@ func SendInitialTCP(address string, data []byte) (*net.TCPConn, error) {
 	return conn, nil
 }
 
+func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
+	conn.SetReadDeadline(time.Now().Add(time.Second))
+	buffer := make([]byte, buff_size)
+	n, err := conn.Read(buffer)
+	if err != nil {
+		if err != nil {
+			if err == io.EOF {
+				return buffer, fmt.Errorf("Connection closed by server")
+			} else {
+				return buffer, fmt.Errorf("Error reading from connection:", err)
+			}
+		}
+	}
+	return buffer[:n], nil
+
+}
+
 // SendTCPReply is a function to reply to a given TCP connection.
 // The function takes a given connection and data to send and returns an error value, with nil implying there has been no error.
 func SendTCPReply(conn net.Conn, data []byte) error {
@@ -93,6 +111,18 @@ func SendTCPReply(conn net.Conn, data []byte) error {
 	}
 
 	return nil
+}
+
+func Handle_Single_TCP_Exchange(target_addr string, data []byte, buff_size uint16) ([]byte, error) {
+	conn, err := SendInitialTCP(target_addr, data)
+	if err != nil {
+		return nil, err
+	}
+	buff, err := Get_TCP_Reply(conn, buff_size)
+	if err != nil {
+		return nil, err
+	}
+	return buff, nil
 }
 
 // GetPublicIP is a function to get the public IP address of the machine.
