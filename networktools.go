@@ -87,15 +87,24 @@ func Get_TCP_Reply(conn net.Conn, buff_size uint16) ([]byte, error) {
 	conn.SetReadDeadline(time.Now().Add(time.Second))
 	buffer := make([]byte, buff_size)
 	n, err := conn.Read(buffer)
-	fmt.Println(n)
-	if err != nil {
+
+	if n == 0 {
 		if err == io.EOF {
-			return buffer, fmt.Errorf("Connection closed by server")
+			return nil, fmt.Errorf("connection closed by remote")
+		} else if netErr, ok := err.(net.Error); ok && netErr.Timeout() {
+			return nil, fmt.Errorf("read timeout: no data received within deadline")
+		} else if err != nil {
+			return nil, fmt.Errorf("error reading from connection: %v", err)
 		} else {
-			return buffer, fmt.Errorf("Error reading from connection:", err)
+			return nil, fmt.Errorf("no data read, but no error reported")
 		}
 	}
-	return buffer, nil
+
+	if err != nil {
+		return nil, fmt.Errorf("partial read with error: %v", err)
+	}
+
+	return buffer[:n], nil
 
 }
 
