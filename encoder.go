@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	pb "github.com/diarmuidmalanaphy/networktools/standards"
+	"google.golang.org/protobuf/proto"
 	"io"
 	"reflect"
-
-	"google.golang.org/protobuf/proto"
 )
 
 // GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.
@@ -139,7 +139,7 @@ func __serialiseRequest(req Request_Type) ([]byte, error) {
 //	cameraMap.removeCamera(c)
 
 func DeserialiseRequest(data []byte) (Request_Type, error) {
-	request := &Request{}
+	request := &pb.Request{}
 	if err := proto.Unmarshal(data, request); err != nil {
 		return Request_Type{}, err
 	}
