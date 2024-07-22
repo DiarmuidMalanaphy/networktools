@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+
+	"google.golang.org/protobuf/proto"
 )
 
 // GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.
@@ -25,7 +27,10 @@ func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	}
 
 	// Create a Request with the serialized data as the payload
-	req := NewRequest(reqType, serialisedData)
+	req := Request_Type{
+		Type:    reqType,
+		Payload: serialisedData,
+	}
 	serialisedRequest, err := __serialiseRequest(req)
 	if err != nil {
 		return nil, err
@@ -84,6 +89,7 @@ func DeserialiseData(data_type interface{}, raw_data []byte) error {
 	if v.Kind() == reflect.Slice {
 		// Handle slice deserialization
 		sliceElementType := v.Type().Elem()
+
 		for {
 			elemPtr := reflect.New(sliceElementType)
 			err := binary.Read(buf, binary.LittleEndian, elemPtr.Interface())
@@ -107,26 +113,17 @@ func DeserialiseData(data_type interface{}, raw_data []byte) error {
 }
 
 // This function should not be accessed, but it handles the conversion of a request object to bytes.
-func __serialiseRequest(req Request) ([]byte, error) {
-	buf := new(bytes.Buffer)
+func __serialiseRequest(req Request_Type) ([]byte, error) {
+	// Convert custom Request_Type to protobuf Request
+	protoReq := NewRequest(req)
 
-	// Write the Type field
-	if err := binary.Write(buf, binary.LittleEndian, req.Type); err != nil {
+	// Marshal the protobuf Request to a byte slice
+	data, err := proto.Marshal(protoReq)
+	if err != nil {
 		return nil, err
 	}
 
-	// Write the length of the Payload
-	payloadLength := int32(len(req.Payload))
-	if err := binary.Write(buf, binary.LittleEndian, payloadLength); err != nil {
-		return nil, err
-	}
-
-	// Write the Payload bytes
-	if _, err := buf.Write(req.Payload); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
+	return data, nil
 }
 
 // DeserialiseRequest handles the deserialisation of raw data read from a socket into the request standard.
@@ -140,26 +137,24 @@ func __serialiseRequest(req Request) ([]byte, error) {
 //	var c Camera
 //	err := deserialiseData(&c, req.Request.Payload)
 //	cameraMap.removeCamera(c)
-func DeserialiseRequest(data []byte) (Request, error) {
-	var req Request
-	buf := bytes.NewReader(data)
 
-	// Read the Type field
-	if err := binary.Read(buf, binary.LittleEndian, &req.Type); err != nil {
-		return Request{}, err
+func DeserialiseRequest(data []byte) (Request_Type, error) {
+	request := &Request{}
+	if err := proto.Unmarshal(data, request); err != nil {
+		return Request_Type{}, err
 	}
 
-	// Read the length of the Payload
-	var payloadLength int32
-	if err := binary.Read(buf, binary.LittleEndian, &payloadLength); err != nil {
-		return Request{}, err
-	}
+	// Convert the protobuf Request to your custom Request_Type
+	return Request_Type{
+		Type:    uint8(request.Type), // Note: Converting uint32 to uint8
+		Payload: request.Payload,
+	}, nil
+}
 
-	// Read the Payload bytes
-	req.Payload = make([]byte, payloadLength)
-	if _, err := buf.Read(req.Payload); err != nil {
-		return Request{}, err
-	}
+func NewRequest(req Request_Type) *Request {
 
-	return req, nil
+	return &Request{
+		Type:    uint32(req.Type), // Note: Changed to uint32 to match proto3 syntax
+		Payload: req.Payload,
+	}
 }

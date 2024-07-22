@@ -1,9 +1,9 @@
 #!/bin/bash
 
+echo "Grabbing latest version from the git"
+go get -u github.com/diarmuidmalanaphy/networktools@latest
 
+echo "Running tests"
 
-echo "Creating an instance of a server"
-
-go install github.com/diarmuidmalanaphy/networktools@latest
-go test .
+go test . -v
 
