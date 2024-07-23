@@ -1,10 +1,8 @@
 package networktools
 
 import (
-	"fmt"
 	pb "github.com/DiarmuidMalanaphy/networktools/standards"
 	"google.golang.org/protobuf/proto"
-	"reflect"
 )
 
 // GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.

@@ -100,7 +100,7 @@ func transmit(port uint16) {
 		Name: stringToUsername(test),
 	}
 
-	req, err := networktool.GenerateRequest(test_data, 1)
+	req, err := networktool.GenerateRequest(test_data.ToProto(), 1)
 	fmt.Println(err)
 	ip_address := fmt.Sprintf("127.0.0.1:%d", port)
 	networktool.Handle_Single_TCP_Exchange(ip_address, req, 1024)
