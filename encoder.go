@@ -17,6 +17,7 @@ import (
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
 func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 	// First, serialize the data
+	fmt.Println("THIS SHOULD 100% be printed")
 	serialisedData, err := __serialiseData(data)
 	fmt.Println("HereC")
 	if err != nil {

@@ -97,7 +97,6 @@ func transmit(port uint16) {
 	test := "tested"
 
 	test_data := basic{
-
 		Name: stringToUsername(test),
 	}
 	req, _ := networktool.GenerateRequest(test_data, 1)

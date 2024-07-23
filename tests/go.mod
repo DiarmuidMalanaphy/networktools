@@ -7,4 +7,4 @@ require (
 	google.golang.org/protobuf v1.34.2
 )
 
-require github.com/DiarmuidMalanaphy/networktools v0.3.9 // indirect
+require github.com/DiarmuidMalanaphy/networktools v0.3.11 // indirect
