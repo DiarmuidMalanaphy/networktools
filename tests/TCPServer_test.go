@@ -33,8 +33,10 @@ func ConvertFromProto(pb *BasicProto) basic {
 // DeserializeBasic deserializes bytes to a Basic struct using Protocol Buffers
 func DeserializeBasic(data []byte) (basic, error) {
 	pb := &BasicProto{}
+
 	err := proto.Unmarshal(data, pb)
 	if err != nil {
+		fmt.Println("HereC")
 		return basic{}, err
 	}
 	return ConvertFromProto(pb), nil
@@ -90,7 +92,7 @@ func TestTransmission(t *testing.T) {
 }
 
 func transmit(port uint16) {
-	time.Sleep(20 * time.Millisecond)
+	time.Sleep(40 * time.Millisecond)
 
 	test := "tested"
 

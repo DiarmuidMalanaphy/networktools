@@ -18,6 +18,7 @@ import (
 func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 	// First, serialize the data
 	serialisedData, err := __serialiseData(data)
+	fmt.Println("HereC")
 	if err != nil {
 		return nil, err
 	}
