@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package testing;
+option go_package = "github.com/DiarmuidMalanaphy/NetworkHandler/tests";
+
+message BasicProto {
+  bytes name = 1;
+}

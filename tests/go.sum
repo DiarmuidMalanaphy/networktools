@@ -1,6 +1,6 @@
-github.com/DiarmuidMalanaphy/networktools v0.3.0 h1:P5ED21ZBs2SJn+adKblbZn04GWsjraICbmIv7B+/VmQ=
-github.com/DiarmuidMalanaphy/networktools v0.3.0/go.mod h1:2Va20xVeJIh+huJng1RUJ6Rdx5SDX8tZ9n0wmRBGyGM=
-github.com/diarmuidmalanaphy/networktools v0.3.2 h1:aTF2BF4002LlNlDOytVTQ+p96z5dzNaXRJbiaBnFDhY=
-github.com/diarmuidmalanaphy/networktools v0.3.2/go.mod h1:V0mkVsK/7YIciR4sryqhiKJXQbWWnCTPav+TvaTDLWM=
 github.com/diarmuidmalanaphy/networktools v0.3.3 h1:9ryoVCZj+G4w+OurrF+i8BOkH5D7sRhQryLrWI1fSv4=
 github.com/diarmuidmalanaphy/networktools v0.3.3/go.mod h1:1CaBLGS7nRAPfZTImaVm6fBIH58e+XYOHEyu+zU2l5o=
+github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
+golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
+google.golang.org/protobuf v1.34.2 h1:6xV6lTsCfpGD21XK49h7MhtcApnLqkfYgPcdHftf6hg=
+google.golang.org/protobuf v1.34.2/go.mod h1:qYOHts0dSfpeUzUFpOMr/WGzszTmLH+DiWniOlNbLDw=

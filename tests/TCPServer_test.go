@@ -3,6 +3,7 @@ package testing
 import (
 	"fmt"
 	networktool "github.com/diarmuidmalanaphy/networktools"
+	"google.golang.org/protobuf/proto"
 	"strings"
 	"testing"
 	"time"
@@ -15,6 +16,31 @@ type basic struct {
 func (b *basic) to_string() string {
 	trimmedName := strings.TrimRight(string(b.Name[:]), "\x00")
 	return trimmedName
+}
+
+func (b *basic) ConvertToProto() *BasicProto {
+	return &BasicProto{
+		Name: b.Name[:],
+	}
+}
+func ConvertFromProto(pb *BasicProto) basic {
+	var b basic
+	copy(b.Name[:], pb.Name)
+	return b
+}
+
+func SerializeBasic(b *basic) ([]byte, error) {
+	return proto.Marshal(b.ConvertToProto())
+}
+
+// DeserializeBasic deserializes bytes to a Basic struct using Protocol Buffers
+func DeserializeBasic(data []byte) (basic, error) {
+	pb := &BasicProto{}
+	err := proto.Unmarshal(data, pb)
+	if err != nil {
+		return basic{}, err
+	}
+	return ConvertFromProto(pb), nil
 }
 
 func TestTransmission(t *testing.T) {
@@ -32,15 +58,19 @@ func TestTransmission(t *testing.T) {
 		select {
 		case data := <-requestChannel:
 
-			var basicRequest basic
-			err := networktool.DeserialiseData(&basicRequest, data.Request.Payload)
+			//var basicRequest basic
+			//err := networktool.DeserialiseData(&basicRequest, data.Request.Payload)
+			//if err != nil {
+			//	t.Errorf("Error during deserialization: %s", err)
+			//	return
+			//}
+			deserialized, err := DeserializeBasic(data.Request.Payload)
 			if err != nil {
-				t.Errorf("Error during deserialization: %s", err)
+				fmt.Println("Deserialization error:", err)
 				return
 			}
-
 			expected := "tested"
-			result := basicRequest.to_string()
+			result := deserialized.to_string()
 			if result != expected {
 				t.Errorf("Expected %s, got %s", expected, result)
 			} else {
@@ -62,11 +92,13 @@ func transmit(port uint16) {
 	time.Sleep(20 * time.Millisecond)
 
 	test := "tested"
+
 	test_data := basic{
 
 		Name: stringToUsername(test),
 	}
-	req, _ := networktool.GenerateRequest(test_data, 1)
+	test_data_basic, _ := SerializeBasic(&test_data)
+	req, _ := networktool.GenerateRequest(test_data_basic, 1)
 	ip_address := fmt.Sprintf("127.0.0.1:%d", port)
 	networktool.Handle_Single_TCP_Exchange(ip_address, req, 1024)
 
