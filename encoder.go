@@ -44,7 +44,7 @@ func __serialiseData(data_to_be_serialised interface{}) ([]byte, error) {
 	if !ok {
 		return nil, fmt.Errorf("input does not implement ToProto() method")
 	}
-
+	fmt.Println("HereB")
 	// Convert the input to a protobuf message
 	protoData := protoConverter.ToProto()
 
