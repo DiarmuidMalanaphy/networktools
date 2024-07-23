@@ -1,13 +1,8 @@
 package networktools
 
 import (
-	"bytes"
-	"encoding/binary"
-	"fmt"
 	pb "github.com/DiarmuidMalanaphy/networktools/standards"
 	"google.golang.org/protobuf/proto"
-	"io"
-	"reflect"
 )
 
 // GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.
@@ -19,7 +14,7 @@ import (
 //	_ := deserialiseData(&ic, req.Request.Payload)
 //	newCamera := (Logic to generate camera object)
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
-func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
+func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 	// First, serialize the data
 	serialisedData, err := __serialiseData(data)
 	if err != nil {
@@ -40,76 +35,12 @@ func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	return serialisedRequest, nil
 }
 
-// Private method defined to convert a struct to a fixed byte amount able to be transferred over a network.
-// In practice this method is primarily used on the Request Datatype but it generalises effectively due to the use of interfaces.
-func __serialiseData(data interface{}) ([]byte, error) {
-	buf := new(bytes.Buffer)
-
-	v := reflect.ValueOf(data)
-	if v.Kind() == reflect.Slice {
-		// Handle slice serialization
-		for i := 0; i < v.Len(); i++ {
-			err := binary.Write(buf, binary.LittleEndian, v.Index(i).Interface())
-			if err != nil {
-				return nil, err
-			}
-		}
-	} else {
-		// Handle non-slice serialization
-		err := binary.Write(buf, binary.LittleEndian, data)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return buf.Bytes(), nil
+func __serialiseData(data proto.Message) ([]byte, error) {
+	return proto.Marshal(data)
 }
 
-// DeserialiseData converts a section of raw data to a given struct or slice of structs.
-// The use of this method requires an instance of the struct.
-//
-// Example:
-//
-//	var frame ImageFrame
-//	err := deserialiseData(&frame, req.Request.Payload)
-//	//The payload is read inplace into the frame variable
-//
-// In practice this function should be paired with the DeserialiseRequest function.
-func DeserialiseData(data_type interface{}, raw_data []byte) error {
-	buf := bytes.NewReader(raw_data)
-	v := reflect.ValueOf(data_type)
-
-	// Check if dataType is a pointer
-	if v.Kind() != reflect.Ptr {
-		return fmt.Errorf("data_type must be a pointer")
-	}
-
-	v = v.Elem()
-
-	if v.Kind() == reflect.Slice {
-		// Handle slice deserialization
-		sliceElementType := v.Type().Elem()
-
-		for {
-			elemPtr := reflect.New(sliceElementType)
-			err := binary.Read(buf, binary.LittleEndian, elemPtr.Interface())
-			if err == io.EOF {
-				break // End of data
-			}
-			if err != nil {
-				return err
-			}
-			v.Set(reflect.Append(v, elemPtr.Elem()))
-		}
-	} else {
-		// Handle non-slice deserialization
-		err := binary.Read(buf, binary.LittleEndian, data_type)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+func DeserialiseData(msg proto.Message, raw_data []byte) error {
+	return proto.Unmarshal(raw_data, msg)
 }
 
 // This function should not be accessed, but it handles the conversion of a request object to bytes.
