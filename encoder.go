@@ -151,9 +151,8 @@ func DeserialiseRequest(data []byte) (Request_Type, error) {
 	}, nil
 }
 
-func NewRequest(req Request_Type) *Request {
-
-	return &Request{
+func NewRequest(req Request_Type) *pb.Request {
+	return &pb.Request{
 		Type:    uint32(req.Type), // Note: Changed to uint32 to match proto3 syntax
 		Payload: req.Payload,
 	}
