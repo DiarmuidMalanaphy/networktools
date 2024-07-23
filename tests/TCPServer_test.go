@@ -2,7 +2,7 @@ package testing
 
 import (
 	"fmt"
-	networktool "github.com/diarmuidmalanaphy/networktools"
+	networktool "github.com/DiarmuidMalanaphy/networktools"
 	"google.golang.org/protobuf/proto"
 	"strings"
 	"testing"
@@ -96,7 +96,7 @@ func transmit(port uint16) {
 
 	test := "tested"
 
-	test_data := basic{
+	test_data := &basic{
 		Name: stringToUsername(test),
 	}
 	req, _ := networktool.GenerateRequest(test_data, 1)

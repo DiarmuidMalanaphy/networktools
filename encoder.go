@@ -15,7 +15,7 @@ import (
 //	_ := deserialiseData(&ic, req.Request.Payload)
 //	newCamera := (Logic to generate camera object)
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
-func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
+func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 	// First, serialize the data
 	fmt.Println("THIS SHOULD 100% be printed")
 	serialisedData, err := __serialiseData(data)
