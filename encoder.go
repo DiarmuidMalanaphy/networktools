@@ -1,6 +1,7 @@
 package networktools
 
 import (
+	"fmt"
 	pb "github.com/DiarmuidMalanaphy/networktools/standards"
 	"google.golang.org/protobuf/proto"
 )
@@ -35,8 +36,24 @@ func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 	return serialisedRequest, nil
 }
 
-func __serialiseData(data proto.Message) ([]byte, error) {
-	return proto.Marshal(data)
+func __serialiseData(data_to_be_serialised interface{}) ([]byte, error) {
+	// Use type assertion to check if the req has a ToProto method
+	protoConverter, ok := data_to_be_serialised.(interface {
+		ToProto() proto.Message
+	})
+	if !ok {
+		return nil, fmt.Errorf("input does not implement ToProto() method")
+	}
+
+	// Convert the input to a protobuf message
+	protoData := protoConverter.ToProto()
+
+	// Marshal the protobuf Request to a byte slice
+	data, err := proto.Marshal(protoData)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
 
 func DeserialiseData(msg proto.Message, raw_data []byte) error {

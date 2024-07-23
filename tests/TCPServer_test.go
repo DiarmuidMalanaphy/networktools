@@ -18,7 +18,7 @@ func (b *basic) to_string() string {
 	return trimmedName
 }
 
-func (b *basic) ConvertToProto() *BasicProto {
+func (b *basic) ToProto() *BasicProto {
 	return &BasicProto{
 		Name: b.Name[:],
 	}
@@ -27,10 +27,7 @@ func ConvertFromProto(pb *BasicProto) basic {
 	var b basic
 	copy(b.Name[:], pb.Name)
 	return b
-}
 
-func SerializeBasic(b *basic) ([]byte, error) {
-	return proto.Marshal(b.ConvertToProto())
 }
 
 // DeserializeBasic deserializes bytes to a Basic struct using Protocol Buffers
@@ -97,8 +94,7 @@ func transmit(port uint16) {
 
 		Name: stringToUsername(test),
 	}
-	test_data_basic, _ := SerializeBasic(&test_data)
-	req, _ := networktool.GenerateRequest(test_data_basic, 1)
+	req, _ := networktool.GenerateRequest(test_data, 1)
 	ip_address := fmt.Sprintf("127.0.0.1:%d", port)
 	networktool.Handle_Single_TCP_Exchange(ip_address, req, 1024)
 
