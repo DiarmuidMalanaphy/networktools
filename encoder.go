@@ -14,20 +14,26 @@ import (
 //	_ := deserialiseData(&ic, req.Request.Payload)
 //	newCamera := (Logic to generate camera object)
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
-func GenerateRequest(data []byte, reqType uint8) ([]byte, error) {
-
-	// Create a Request with the serialized data as the payload
-	req := Request_Type{
-		Type:    reqType,
-		Payload: data,
-	}
-	serialisedRequest, err := __serialiseRequest(req)
+func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
+	// Serialize the proto.Message
+	serializedData, err := proto.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	// Return the serialized request
-	return serialisedRequest, nil
+	// Create a Request with the serialized data as the payload
+	req := Request_Type{
+		Type:    reqType,
+		Payload: serializedData,
+	}
+
+	// Serialize the entire request
+	serializedRequest, err := __serialiseRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return serializedRequest, nil
 }
 
 func DeserialiseData(msg proto.Message, raw_data []byte) error {
