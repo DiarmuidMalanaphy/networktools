@@ -50,6 +50,8 @@ func __serialiseData(data_to_be_serialised interface{}) ([]byte, error) {
 
 	// Marshal the protobuf Request to a byte slice
 	data, err := proto.Marshal(protoData)
+	fmt.Println("Here")
+
 	if err != nil {
 		return nil, err
 	}

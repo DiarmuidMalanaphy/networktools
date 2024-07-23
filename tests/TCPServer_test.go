@@ -61,15 +61,19 @@ func TestTransmission(t *testing.T) {
 			//	t.Errorf("Error during deserialization: %s", err)
 			//	return
 			//}
+			fmt.Println(data.Request.Payload)
 			deserialized, err := DeserializeBasic(data.Request.Payload)
 			if err != nil {
-				fmt.Println("Deserialization error:", err)
+				t.Errorf("Deserialization error: %s", err)
+
 				return
 			}
 			expected := "tested"
 			result := deserialized.to_string()
+			fmt.Println("Hello")
 			if result != expected {
 				t.Errorf("Expected %s, got %s", expected, result)
+				return
 			} else {
 				t.Logf("\nSuccess: received expected data '%s' - TCP server initialisiation, serialisation and deserialisation seems to work", result)
 				success = true
@@ -104,4 +108,26 @@ func stringToUsername(s string) [20]byte {
 	var username [20]byte
 	copy(username[:], s)
 	return username
+}
+
+func SerializeBasic(b *basic) ([]byte, error) {
+	return proto.Marshal(b.ToProto())
+}
+
+func TestSerializeDeserialize(t *testing.T) {
+	original := basic{Name: [20]byte{'t', 'e', 's', 't', 'e', 'd'}}
+
+	data, err := SerializeBasic(&original)
+	if err != nil {
+		t.Fatalf("Serialization error: %v", err)
+	}
+	fmt.Println(data)
+	deserialized, err := DeserializeBasic(data)
+	if err != nil {
+		t.Fatalf("Deserialization error: %v", err)
+	}
+	fmt.Println(deserialized)
+	if string(original.Name[:]) != string(deserialized.Name[:]) {
+		t.Errorf("Original and deserialized data don't match")
+	}
 }
