@@ -4,6 +4,7 @@ import (
 	"fmt"
 	pb "github.com/DiarmuidMalanaphy/networktools/standards"
 	"google.golang.org/protobuf/proto"
+	"reflect"
 )
 
 // GenerateRequest an object or slice of objects, with their request type and serialises them into a byte format that is able to be transmitted over a network.
@@ -39,25 +40,36 @@ func GenerateRequest(data interface{}, reqType uint8) ([]byte, error) {
 }
 
 func __serialiseData(data_to_be_serialised interface{}) ([]byte, error) {
-	// Use type assertion to check if the req has a ToProto method
-	protoConverter, ok := data_to_be_serialised.(interface {
-		ToProto() proto.Message
-	})
-	if !ok {
+	// Get the reflect.Type of the input
+	t := reflect.TypeOf(data_to_be_serialised)
+
+	// Check if the type is a pointer, and if so, get the element type
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+
+	// Check if the type has a ToProto method
+	_, exists := t.MethodByName("ToProto")
+	if !exists {
 		return nil, fmt.Errorf("input does not implement ToProto() method")
 	}
-	fmt.Println("HereB")
-	// Convert the input to a protobuf message
-	protoData := protoConverter.ToProto()
 
-	// Marshal the protobuf Request to a byte slice
-	data, err := proto.Marshal(protoData)
-	fmt.Println("Here")
-
-	if err != nil {
-		return nil, err
+	// Call the ToProto method
+	v := reflect.ValueOf(data_to_be_serialised)
+	if v.Kind() == reflect.Ptr && v.IsNil() {
+		return nil, fmt.Errorf("nil pointer")
 	}
-	return data, nil
+
+	protoMsg := v.MethodByName("ToProto").Call(nil)[0].Interface()
+
+	// Convert to proto.Message
+	msg, ok := protoMsg.(proto.Message)
+	if !ok {
+		return nil, fmt.Errorf("ToProto() does not return a proto.Message")
+	}
+
+	// Marshal the protobuf message to a byte slice
+	return proto.Marshal(msg)
 }
 
 func DeserialiseData(msg proto.Message, raw_data []byte) error {
