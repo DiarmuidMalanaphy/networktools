@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	pb "github.com/diarmuidmalanaphy/networktools/standards"
+	pb "github.com/DiarmuidMalanaphy/networktools/standards"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"reflect"
