@@ -1,7 +1,3 @@
-github.com/DiarmuidMalanaphy/networktools v0.3.17 h1:3TNa0/yNIOLaB0+cZxKLfVwICMAOWt/6vfDF39CbHFw=
-github.com/DiarmuidMalanaphy/networktools v0.3.17/go.mod h1:u8Ztb0V8xH4w3fvVk1QoQ6kC1h4mUTQlbrvj6Mhcy5U=
-github.com/DiarmuidMalanaphy/networktools v0.3.18 h1:iIOkp6wRdCqdwyt9i6vQG7ZOhMLNylqlC3rYBgDJVhA=
-github.com/DiarmuidMalanaphy/networktools v0.3.18/go.mod h1:u8Ztb0V8xH4w3fvVk1QoQ6kC1h4mUTQlbrvj6Mhcy5U=
 github.com/DiarmuidMalanaphy/networktools v0.3.19 h1:Cm9w0IENfiHM0b55ubvCDoKZTbVzXKIVv9NC4fnWC5Y=
 github.com/DiarmuidMalanaphy/networktools v0.3.19/go.mod h1:u8Ztb0V8xH4w3fvVk1QoQ6kC1h4mUTQlbrvj6Mhcy5U=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=

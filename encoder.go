@@ -23,15 +23,12 @@ func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// Create a Request with the serialized data as the payload
-		req := Request_Type{
-			Type:          reqType,
-			PayloadLength: uint64(len(serializedData)),
-			Payload:       serializedData,
+		req := &pb.Request{
+			Type:        uint32(reqType),
+			PayloadSize: uint64(len(serializedData)),
+			Payload:     serializedData,
 		}
-		// Serialize the entire request
-		serializedRequest, err = __serialiseRequest(req)
+		serializedRequest, err = proto.Marshal(req)
 		if err != nil {
 			return nil, err
 		}
@@ -48,20 +45,6 @@ func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
 
 func DeserialiseData(msg proto.Message, raw_data []byte) error {
 	return proto.Unmarshal(raw_data, msg)
-}
-
-// This function should not be accessed, but it handles the conversion of a request object to bytes.
-func __serialiseRequest(req Request_Type) ([]byte, error) {
-	// Convert custom Request_Type to protobuf Request
-	protoReq := NewRequest(req)
-
-	// Marshal the protobuf Request to a byte slice
-	data, err := proto.Marshal(protoReq)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
 }
 
 // DeserialiseRequest handles the deserialisation of raw data read from a socket into the request standard.
@@ -84,16 +67,10 @@ func DeserialiseRequest(data []byte) (Request_Type, error) {
 
 	// Convert the protobuf Request to your custom Request_Type
 	return Request_Type{
-		Type:    uint8(request.Type), // Note: Converting uint32 to uint8
-		Payload: request.Payload,
+		Type:          uint8(request.Type), // Note: Converting uint32 to uint8
+		PayloadLength: request.PayloadSize,
+		Payload:       request.Payload,
 	}, nil
-}
-
-func NewRequest(req Request_Type) *pb.Request {
-	return &pb.Request{
-		Type:    uint32(req.Type), // Note: Changed to uint32 to match proto3 syntax
-		Payload: req.Payload,
-	}
 }
 
 func NewNullRequest(requestType uint32) ([]byte, error) {

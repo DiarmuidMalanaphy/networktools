@@ -63,6 +63,7 @@ func TestTransmission(t *testing.T) {
 			//	t.Errorf("Error during deserialization: %s", err)
 			//	return
 			//}
+
 			fmt.Println(data.Request.Payload)
 			deserialized, err := DeserializeBasic(data.Request.Payload)
 			if err != nil {
