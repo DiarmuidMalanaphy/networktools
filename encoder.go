@@ -15,22 +15,32 @@ import (
 //	newCamera := (Logic to generate camera object)
 //	outgoingReq, err := generateRequest(newCamera, RequestSuccessful)
 func GenerateRequest(data proto.Message, reqType uint8) ([]byte, error) {
-	// Serialize the proto.Message
-	serializedData, err := proto.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
+	var serializedRequest []byte
+	var err error
+	if data != nil {
+		// Serialize the proto.Message
+		serializedData, err := proto.Marshal(data)
+		if err != nil {
+			return nil, err
+		}
 
-	// Create a Request with the serialized data as the payload
-	req := Request_Type{
-		Type:    reqType,
-		Payload: serializedData,
-	}
+		// Create a Request with the serialized data as the payload
+		req := Request_Type{
+			Type:          reqType,
+			PayloadLength: uint64(len(serializedData)),
+			Payload:       serializedData,
+		}
+		// Serialize the entire request
+		serializedRequest, err = __serialiseRequest(req)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		serializedRequest, err = NewNullRequest(uint32(reqType))
+		if err != nil {
+			return nil, err
+		}
 
-	// Serialize the entire request
-	serializedRequest, err := __serialiseRequest(req)
-	if err != nil {
-		return nil, err
 	}
 
 	return serializedRequest, nil
@@ -84,4 +94,11 @@ func NewRequest(req Request_Type) *pb.Request {
 		Type:    uint32(req.Type), // Note: Changed to uint32 to match proto3 syntax
 		Payload: req.Payload,
 	}
+}
+
+func NewNullRequest(requestType uint32) ([]byte, error) {
+	req := &pb.Request{
+		Type: requestType,
+	}
+	return proto.Marshal(req)
 }

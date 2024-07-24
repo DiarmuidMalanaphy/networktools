@@ -5,7 +5,9 @@ option go_package = "github.com/DiarmuidMalanaphy/networktools/standards";
 
 message Request {
 	uint32 type = 1;
-	bytes payload = 2;
+	uint64 payloadSize = 2;
+	optional bytes payload = 3;
+
 }
 
 

@@ -3,8 +3,9 @@ package networktools
 import "net"
 
 type Request_Type struct {
-	Type    uint8
-	Payload []byte // Raw data, can be interpreted based on the request type
+	Type          uint8
+	PayloadLength uint64
+	Payload       []byte // Raw data, can be interpreted based on the request type
 }
 
 // The key distinction between the network data types is the fact that UDP is connectionless
