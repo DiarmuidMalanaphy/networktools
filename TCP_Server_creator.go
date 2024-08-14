@@ -82,7 +82,9 @@ func handleTCPConnection(conn net.Conn, request_channel chan TCPNetworkData) {
 				continue
 			}
 			if err == io.EOF {
-				fmt.Println("Connection closed by client")
+				conn.Close()
+				return
+				// We assume the client has closed the connection
 			} else {
 				fmt.Println("Error reading from connection:", err)
 			}

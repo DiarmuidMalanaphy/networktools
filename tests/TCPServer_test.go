@@ -36,7 +36,6 @@ func DeserializeBasic(data []byte) (basic, error) {
 
 	err := proto.Unmarshal(data, pb)
 	if err != nil {
-		fmt.Println("HereC")
 		return basic{}, err
 	}
 	return ConvertFromProto(pb), nil
@@ -65,6 +64,7 @@ func TestTransmission(t *testing.T) {
 			//}
 
 			fmt.Println(data.Request.Payload)
+			fmt.Println(data.Request.PayloadLength)
 			deserialized, err := DeserializeBasic(data.Request.Payload)
 			if err != nil {
 				t.Errorf("Deserialization error: %s", err)
@@ -73,7 +73,6 @@ func TestTransmission(t *testing.T) {
 			}
 			expected := "tested"
 			result := deserialized.to_string()
-			fmt.Println("Hello")
 			if result != expected {
 				t.Errorf("Expected %s, got %s", expected, result)
 				return

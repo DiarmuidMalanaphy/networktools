@@ -1,5 +1,7 @@
 github.com/DiarmuidMalanaphy/networktools v0.3.19 h1:Cm9w0IENfiHM0b55ubvCDoKZTbVzXKIVv9NC4fnWC5Y=
 github.com/DiarmuidMalanaphy/networktools v0.3.19/go.mod h1:u8Ztb0V8xH4w3fvVk1QoQ6kC1h4mUTQlbrvj6Mhcy5U=
+github.com/DiarmuidMalanaphy/networktools v0.3.20 h1:N8u2x7vJUHSltOCRB9w7ce7zpoIPljurn3RqN2YJkHM=
+github.com/DiarmuidMalanaphy/networktools v0.3.20/go.mod h1:u8Ztb0V8xH4w3fvVk1QoQ6kC1h4mUTQlbrvj6Mhcy5U=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 h1:E7g+9GITq07hpfrRu66IVDexMakfv52eLZ2CXBWiKr4=
 google.golang.org/protobuf v1.34.2 h1:6xV6lTsCfpGD21XK49h7MhtcApnLqkfYgPcdHftf6hg=
